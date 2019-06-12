@@ -17,6 +17,7 @@ package com.datastax.oss.driver.api.core.session;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.auth.AuthProvider;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.config.DriverExecutionProfile;
@@ -308,6 +309,9 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
     this.classLoader = classLoader;
     return self;
   }
+  public SelfT WithAuthProvider(@Nullable AuthProvider provider{
+
+  })
 
   /**
    * Creates the session with the options set by this builder.
@@ -386,6 +390,7 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
       NodeStateListener nodeStateListener,
       SchemaChangeListener schemaChangeListener,
       RequestTracker requestTracker,
+      AuthProvider authProvider,
       Map<String, String> localDatacenters,
       Map<String, Predicate<Node>> nodeFilters,
       ClassLoader classLoader) {

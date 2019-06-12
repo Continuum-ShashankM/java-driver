@@ -205,6 +205,7 @@ public class DefaultDriverContext implements InternalDriverContext {
       NodeStateListener nodeStateListener,
       SchemaChangeListener schemaChangeListener,
       RequestTracker requestTracker,
+      AuthProvider provider,
       Map<String, String> localDatacenters,
       Map<String, Predicate<Node>> nodeFilters,
       ClassLoader classLoader) {
@@ -501,6 +502,21 @@ public class DefaultDriverContext implements InternalDriverContext {
                         String.format(
                             "Missing request tracker, check your configuration (%s)",
                             DefaultDriverOption.REQUEST_TRACKER_CLASS)));
+  }
+  protected AuthProvider BuildAuthProvider(AuthProvider authProviderFromBuilder) {
+    return (requestTrackerFromBuilder != null)
+        ? requestTrackerFromBuilder
+        : Reflection.buildFromConfig(
+        this,
+        DefaultDriverOption.REQUEST_TRACKER_CLASS,
+        RequestTracker.class,
+        "com.datastax.oss.driver.internal.core.tracker")
+        .orElseThrow(
+            () ->
+                new IllegalArgumentException(
+                    String.format(
+                        "Missing request tracker, check your configuration (%s)",
+                        DefaultDriverOption.REQUEST_TRACKER_CLASS)));
   }
 
   @NonNull
