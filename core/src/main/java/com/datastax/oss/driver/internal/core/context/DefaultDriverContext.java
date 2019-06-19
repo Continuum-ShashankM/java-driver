@@ -125,8 +125,6 @@ public class DefaultDriverContext implements InternalDriverContext {
       new LazyReference<>("timestampGenerator", this::buildTimestampGenerator, cycleDetector);
   private final LazyReference<AddressTranslator> addressTranslatorRef =
       new LazyReference<>("addressTranslator", this::buildAddressTranslator, cycleDetector);
-  private final LazyReference<Optional<AuthProvider>> authProviderRef =
-      new LazyReference<>("authProvider", this::buildAuthProvider, cycleDetector);
   private final LazyReference<Optional<SslEngineFactory>> sslEngineFactoryRef =
       new LazyReference<>("sslEngineFactory", this::buildSslEngineFactory, cycleDetector);
 
@@ -184,6 +182,7 @@ public class DefaultDriverContext implements InternalDriverContext {
   private final LazyReference<NodeStateListener> nodeStateListenerRef;
   private final LazyReference<SchemaChangeListener> schemaChangeListenerRef;
   private final LazyReference<RequestTracker> requestTrackerRef;
+  private final LazyReference<Optional<AuthProvider>> authProviderRef;
 
   private final DriverConfig config;
   private final DriverConfigLoader configLoader;
@@ -193,6 +192,7 @@ public class DefaultDriverContext implements InternalDriverContext {
   private final NodeStateListener nodeStateListenerFromBuilder;
   private final SchemaChangeListener schemaChangeListenerFromBuilder;
   private final RequestTracker requestTrackerFromBuilder;
+  private final AuthProvider autProviderFromBuilder;
   private final Map<String, String> localDatacentersFromBuilder;
   private final Map<String, Predicate<Node>> nodeFiltersFromBuilder;
   private final ClassLoader classLoader;
@@ -205,7 +205,7 @@ public class DefaultDriverContext implements InternalDriverContext {
       NodeStateListener nodeStateListener,
       SchemaChangeListener schemaChangeListener,
       RequestTracker requestTracker,
-      AuthProvider provider,
+      AuthProvider authProvider,
       Map<String, String> localDatacenters,
       Map<String, Predicate<Node>> nodeFilters,
       ClassLoader classLoader) {
@@ -232,6 +232,11 @@ public class DefaultDriverContext implements InternalDriverContext {
             () -> buildSchemaChangeListener(schemaChangeListenerFromBuilder),
             cycleDetector);
     this.requestTrackerFromBuilder = requestTracker;
+    this.autProviderFromBuilder = authProvider;
+
+    this.authProviderRef =
+        new LazyReference<>(
+            "authProvider", () -> buildAuthProvider(autProviderFromBuilder), cycleDetector);
     this.requestTrackerRef =
         new LazyReference<>(
             "requestTracker", () -> buildRequestTracker(requestTrackerFromBuilder), cycleDetector);
@@ -312,14 +317,6 @@ public class DefaultDriverContext implements InternalDriverContext {
                     String.format(
                         "Missing address translator, check your configuration (%s)",
                         DefaultDriverOption.ADDRESS_TRANSLATOR_CLASS)));
-  }
-
-  protected Optional<AuthProvider> buildAuthProvider() {
-    return Reflection.buildFromConfig(
-        this,
-        DefaultDriverOption.AUTH_PROVIDER_CLASS,
-        AuthProvider.class,
-        "com.datastax.oss.driver.internal.core.auth");
   }
 
   protected Optional<SslEngineFactory> buildSslEngineFactory() {
@@ -503,20 +500,15 @@ public class DefaultDriverContext implements InternalDriverContext {
                             "Missing request tracker, check your configuration (%s)",
                             DefaultDriverOption.REQUEST_TRACKER_CLASS)));
   }
-  protected AuthProvider BuildAuthProvider(AuthProvider authProviderFromBuilder) {
-    return (requestTrackerFromBuilder != null)
-        ? requestTrackerFromBuilder
+
+  protected Optional<AuthProvider> buildAuthProvider(AuthProvider authProviderFromBuilder) {
+    return (authProviderFromBuilder != null)
+        ? Optional.of(authProviderFromBuilder)
         : Reflection.buildFromConfig(
-        this,
-        DefaultDriverOption.REQUEST_TRACKER_CLASS,
-        RequestTracker.class,
-        "com.datastax.oss.driver.internal.core.tracker")
-        .orElseThrow(
-            () ->
-                new IllegalArgumentException(
-                    String.format(
-                        "Missing request tracker, check your configuration (%s)",
-                        DefaultDriverOption.REQUEST_TRACKER_CLASS)));
+            this,
+            DefaultDriverOption.AUTH_PROVIDER_CLASS,
+            AuthProvider.class,
+            "com.datastax.oss.driver.internal.core.auth");
   }
 
   @NonNull

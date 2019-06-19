@@ -15,6 +15,7 @@
  */
 package com.datastax.oss.driver.example.guava.internal;
 
+import com.datastax.oss.driver.api.core.auth.AuthProvider;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.cql.PrepareRequest;
 import com.datastax.oss.driver.api.core.cql.Statement;
@@ -46,6 +47,7 @@ public class GuavaDriverContext extends DefaultDriverContext {
       NodeStateListener nodeStateListener,
       SchemaChangeListener schemaChangeListener,
       RequestTracker requestTracker,
+      AuthProvider authProvider,
       Map<String, String> localDatacenters,
       Map<String, Predicate<Node>> nodeFilters,
       ClassLoader classLoader) {
@@ -55,6 +57,7 @@ public class GuavaDriverContext extends DefaultDriverContext {
         nodeStateListener,
         schemaChangeListener,
         requestTracker,
+        authProvider,
         localDatacenters,
         nodeFilters,
         classLoader);

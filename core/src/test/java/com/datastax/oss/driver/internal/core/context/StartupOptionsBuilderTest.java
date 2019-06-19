@@ -71,6 +71,7 @@ public class StartupOptionsBuilderTest {
             nodeStateListener,
             schemaChangeListener,
             requestTracker,
+            null,
             localDatacenters,
             nodeFilters,
             classLoader);

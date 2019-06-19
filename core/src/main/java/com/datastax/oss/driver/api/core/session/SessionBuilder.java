@@ -71,6 +71,7 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
   private NodeStateListener nodeStateListener;
   private SchemaChangeListener schemaChangeListener;
   protected RequestTracker requestTracker;
+  protected AuthProvider authProvider;
   private ImmutableMap.Builder<String, String> localDatacenters = ImmutableMap.builder();
   private ImmutableMap.Builder<String, Predicate<Node>> nodeFilters = ImmutableMap.builder();
   protected CqlIdentifier keyspace;
@@ -225,6 +226,18 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
   }
 
   /**
+   * Register an auth provider
+   *
+   * <p>If the auth provider is specified programmatically with this method, it overrides the
+   * configuration (that is, the {@code advanced.auth-provider} option will be ignored).
+   */
+  @NonNull
+  public SelfT WithAuth(@Nullable AuthProvider authProvider) {
+    this.authProvider = authProvider;
+    return self;
+  }
+
+  /**
    * Specifies the datacenter that is considered "local" by the load balancing policy.
    *
    * <p>This is a programmatic alternative to the configuration option {@code
@@ -309,9 +322,6 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
     this.classLoader = classLoader;
     return self;
   }
-  public SelfT WithAuthProvider(@Nullable AuthProvider provider{
-
-  })
 
   /**
    * Creates the session with the options set by this builder.
@@ -367,6 +377,7 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
                   nodeStateListener,
                   schemaChangeListener,
                   requestTracker,
+                  authProvider,
                   localDatacenters.build(),
                   nodeFilters.build(),
                   classLoader),
@@ -400,6 +411,7 @@ public abstract class SessionBuilder<SelfT extends SessionBuilder, SessionT> {
         nodeStateListener,
         schemaChangeListener,
         requestTracker,
+        authProvider,
         localDatacenters,
         nodeFilters,
         classLoader);

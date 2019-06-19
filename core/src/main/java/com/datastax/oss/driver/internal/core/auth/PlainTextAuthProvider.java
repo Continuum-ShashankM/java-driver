@@ -44,10 +44,31 @@ import net.jcip.annotations.ThreadSafe;
 public class PlainTextAuthProvider extends PlainTextAuthProviderBase {
 
   private final DriverExecutionProfile config;
+  private final String username;
+  private final String password;
 
   public PlainTextAuthProvider(DriverContext context) {
     super(context.getSessionName());
     this.config = context.getConfig().getDefaultProfile();
+
+  }
+  /** Builds a new instance. */
+  public PlainTextAuthProvider(String username, String password) {
+    this("", null, username, password);
+  }
+
+  /** Builds a new instance. */
+  public PlainTextAuthProvider(String username, String password, String logPrefix) {
+    this(logPrefix, null, username, password);
+  }
+
+  protected PlainTextAuthProvider(
+      String logPrefix, DriverExecutionProfile config, String username, String password) {
+    this.logPrefix = logPrefix;
+    this.config = config;
+    this.password = password;
+    this.username = username;
+
   }
 
   @NonNull
@@ -56,5 +77,74 @@ public class PlainTextAuthProvider extends PlainTextAuthProviderBase {
     return new Credentials(
         config.getString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME).toCharArray(),
         config.getString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD).toCharArray());
+
+  public Authenticator newAuthenticator(
+      @NonNull EndPoint endPoint, @NonNull String serverAuthenticator) {
+    String usernameLocal = username;
+    String passwordLocal = password;
+    if (usernameLocal == null) {
+      if (config != null) {
+        usernameLocal = config.getString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME);
+      }
+    }
+    if (passwordLocal == null) {
+      if (config != null) {
+        passwordLocal = config.getString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD);
+      }
+    }
+    if (passwordLocal == null || usernameLocal == null) {
+      LOG.warn(
+          "[{}] {} No Username, or Password defined; "
+              + "This is suspicious because the driver expects authentication",
+          logPrefix,
+          endPoint);
+    }
+
+    return new PlainTextAuthenticator(usernameLocal, passwordLocal);
+  }
+
+  @Override
+  public void onMissingChallenge(@NonNull EndPoint endPoint) {
+    LOG.warn(
+        "[{}] {} did not send an authentication challenge; "
+            + "This is suspicious because the driver expects authentication",
+        logPrefix,
+        endPoint);
+  }
+
+  @Override
+  public void close() throws Exception {
+    // nothing to do
+  }
+
+  private static class PlainTextAuthenticator implements SyncAuthenticator {
+
+    private final ByteBuffer initialToken;
+
+    PlainTextAuthenticator(String username, String password) {
+      byte[] usernameBytes = username.getBytes(Charsets.UTF_8);
+      byte[] passwordBytes = password.getBytes(Charsets.UTF_8);
+      this.initialToken = ByteBuffer.allocate(usernameBytes.length + passwordBytes.length + 2);
+      initialToken.put((byte) 0);
+      initialToken.put(usernameBytes);
+      initialToken.put((byte) 0);
+      initialToken.put(passwordBytes);
+      initialToken.flip();
+    }
+
+    @Override
+    public ByteBuffer initialResponseSync() {
+      return initialToken.duplicate();
+    }
+
+    @Override
+    public ByteBuffer evaluateChallengeSync(ByteBuffer token) {
+      return null;
+    }
+
+    @Override
+    public void onAuthenticationSuccessSync(ByteBuffer token) {
+      // no-op, the server should send nothing anyway
+    }
   }
 }
