@@ -4,6 +4,7 @@
 
 ### 4.1.0 (in progress)
 
+- [improvement] JAVA-2247: PagingIterable implementations should implement spliterator()
 - [bug] JAVA-2280: Ignore peer rows with missing host id or RPC address
 - [bug] JAVA-2264: Adjust HashedWheelTimer tick duration from 1 to 100 ms
 - [bug] JAVA-2260: Handle empty collections in PreparedStatement.bind(...)
