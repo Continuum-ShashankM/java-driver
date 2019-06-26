@@ -4756,6 +4756,12 @@
         "new": "method java.util.UUID com.datastax.oss.driver.api.core.metadata.Node::getHostId()",
         "annotation": "@edu.umd.cs.findbugs.annotations.Nullable",
         "justification": "Node.getHostId() should have been annotated with @NonNull"
+      },
+      {
+        "code": "java.method.numberOfParametersChanged",
+        "old": "method com.datastax.oss.driver.api.core.context.DriverContext com.datastax.oss.driver.api.core.session.SessionBuilder<SelfT extends com.datastax.oss.driver.api.core.session.SessionBuilder, SessionT>::buildContext(com.datastax.oss.driver.api.core.config.DriverConfigLoader, java.util.List<com.datastax.oss.driver.api.core.type.codec.TypeCodec<?>>, com.datastax.oss.driver.api.core.metadata.NodeStateListener, com.datastax.oss.driver.api.core.metadata.schema.SchemaChangeListener, com.datastax.oss.driver.api.core.tracker.RequestTracker, java.util.Map<java.lang.String, java.lang.String>, java.util.Map<java.lang.String, java.util.function.Predicate<com.datastax.oss.driver.api.core.metadata.Node>>, java.lang.ClassLoader)",
+        "new": "method com.datastax.oss.driver.api.core.context.DriverContext com.datastax.oss.driver.api.core.session.SessionBuilder<SelfT extends com.datastax.oss.driver.api.core.session.SessionBuilder, SessionT>::buildContext(com.datastax.oss.driver.api.core.config.DriverConfigLoader, java.util.List<com.datastax.oss.driver.api.core.type.codec.TypeCodec<?>>, com.datastax.oss.driver.api.core.metadata.NodeStateListener, com.datastax.oss.driver.api.core.metadata.schema.SchemaChangeListener, com.datastax.oss.driver.api.core.tracker.RequestTracker, com.datastax.oss.driver.api.core.auth.AuthProvider, java.util.Map<java.lang.String, java.lang.String>, java.util.Map<java.lang.String, java.util.function.Predicate<com.datastax.oss.driver.api.core.metadata.Node>>, java.lang.ClassLoader)",
+        "justification": "Allow  for AuthProvider to be loaded programmatically"
       }
     ]
   }

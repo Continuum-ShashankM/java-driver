@@ -38,9 +38,7 @@ import net.jcip.annotations.ThreadSafe;
  * }
  * </pre>
  *
- * s
- *
- * <p>See {@code reference.conf} (in the manual or core driver JAR) for more details.
+ * See {@code reference.conf} (in the manual or core driver JAR) for more details.
  */
 @ThreadSafe
 public class PlainTextAuthProvider extends PlainTextAuthProviderBase {

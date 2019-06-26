@@ -62,12 +62,12 @@ public class PlainTextAuthProviderIT {
   }
 
   @Test
-  public void should_connect_with_credentials_programatic() {
+  public void should_connect_with_credentials_programmatic() {
 
     SessionBuilder builder =
         SessionUtils.baseBuilder()
             .addContactEndPoints(ccm.getContactPoints())
-            .WithAuth(new RuntimePlainTextAuthProvider("prefix", "cassandra", "cassandra"));
+            .withAuth(new RuntimePlainTextAuthProvider("prefix", "cassandra", "cassandra"));
 
     try (CqlSession session = (CqlSession) builder.build()) {
       session.execute("select * from system.local");

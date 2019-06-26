@@ -18,13 +18,30 @@ package com.datastax.oss.driver.internal.core.auth;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.jcip.annotations.ThreadSafe;
 
+/**
+ * A simple authentication provider that supports SASL authentication using the PLAIN mechanism for
+ * version 3 (or above) of the CQL native protocol.
+ *
+ * <p>To activate this provider, you will need to define it at runtime, and pass it into the
+ * SessionBuilder during session creation.
+ *
+ * <pre>
+ *     SessionBuilder builder =
+ *         SessionUtils.baseBuilder()
+ *             .withAuth(new RuntimePlainTextAuthProvider("logPrefix", "username", "password"));
+ * </pre>
+ */
 @ThreadSafe
 public class RuntimePlainTextAuthProvider extends PlainTextAuthProviderBase {
   private final String username;
   private final String password;
 
-  public RuntimePlainTextAuthProvider(String prefix, String username, String password) {
-    super(prefix);
+  public RuntimePlainTextAuthProvider(String username, String password) {
+    this("", username, password);
+  }
+
+  public RuntimePlainTextAuthProvider(String logPrefix, String username, String password) {
+    super(logPrefix);
     this.username = username;
     this.password = password;
   }
