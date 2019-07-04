@@ -585,8 +585,24 @@ abstract class AbstractData<T extends SettableData<T>> extends AbstractGettableD
     public int hashCode() {
         // Same as equals
         int hash = 31;
-        for (int i = 0; i < values.length; i++)
-            hash += values[i] == null ? 1 : codecFor(i).deserialize(values[i], protocolVersion).hashCode();
+        for (int i = 0; i < values.length; i++) {
+
+            final ByteBuffer rawValue = values[i];
+
+            if (rawValue == null) {
+                hash += 1;
+                continue;
+            }
+
+            final Object deserializeValue = codecFor(i).deserialize(rawValue, protocolVersion);
+
+            if (deserializeValue == null) {
+                hash += 1;
+                continue;
+            }
+
+            hash += deserializeValue.hashCode();
+        }
         return hash;
     }
 }
