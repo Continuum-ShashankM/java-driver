@@ -228,25 +228,12 @@
                 <version>2.9.1</version>
                 <inherited>true</inherited>
                 <configuration>
+                    <quiet>true</quiet>
                     <verbose>false</verbose>
                     <additionalparam>${javadoc.opts}</additionalparam>
-                    <!-- I can haz math in my javadoc (see http://zverovich.net/2012/01/14/beautiful-math-in-javadoc.html) -->
-                    <header>
-                        &lt;script type="text/javascript"
-                        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;
-                    </header>
-                    <!-- open external links in a separate window -->
-                    <bottom>
-                        &lt;script type="text/javascript"&gt;
-                        for(var i in document.links) {
-                        var link = document.links[i];
-                        if (link.href.indexOf('is-external=true') != -1) link.target = '_blank';
-                        }
-                        &lt;/script&gt;
-                    </bottom>
                     <links>
                         <link>https://docs.oracle.com/javase/8/docs/api/</link>
-                        <link>http://docs.guava-libraries.googlecode.com/git-history/v16.0.1/javadoc/</link>
+                        <link>http://google.github.io/guava/releases/16.0.1/api/docs/</link>
                         <link>http://netty.io/4.0/api/</link>
                         <!-- dependencies from driver-extras -->
                         <link>http://www.joda.org/joda-time/apidocs/</link>
@@ -254,6 +241,49 @@
                         <link>http://fasterxml.github.io/jackson-databind/javadoc/2.6/</link>
                         <link>https://javaee-spec.java.net/nonav/javadocs/</link>
                     </links>
+                    <!-- optional dependencies from other modules (must be explicitly declared here in order to be correctly resolved) -->
+                    <additionalDependencies>
+                        <additionalDependency>
+                            <groupId>org.xerial.snappy</groupId>
+                            <artifactId>snappy-java</artifactId>
+                            <version>${snappy.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>net.jpountz.lz4</groupId>
+                            <artifactId>lz4</artifactId>
+                            <version>${lz4.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>org.hdrhistogram</groupId>
+                            <artifactId>HdrHistogram</artifactId>
+                            <version>${hdr.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>com.fasterxml.jackson.core</groupId>
+                            <artifactId>jackson-core</artifactId>
+                            <version>${jackson.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>com.fasterxml.jackson.core</groupId>
+                            <artifactId>jackson-annotations</artifactId>
+                            <version>${jackson.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>com.fasterxml.jackson.core</groupId>
+                            <artifactId>jackson-databind</artifactId>
+                            <version>${jackson.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>joda-time</groupId>
+                            <artifactId>joda-time</artifactId>
+                            <version>${joda.version}</version>
+                        </additionalDependency>
+                        <additionalDependency>
+                            <groupId>javax.json</groupId>
+                            <artifactId>javax.json-api</artifactId>
+                            <version>${jsr353-api.version}</version>
+                        </additionalDependency>
+                    </additionalDependencies>
                 </configuration>
                 <executions>
                     <execution>
